@@ -56,7 +56,7 @@ func Flatten(st interface{}, opts ...Option) (fields []FlatField, err error) {
   flds := make([]reflect.StructField, 0)
 
   for i := 0; i < typ.NumField(); i++ {
-    flat(typ.Field(i), flds, op)
+    flat(typ.Field(i), &flds, op)
   }
 
   byBreadthFirst(flds).Sort()
@@ -84,10 +84,10 @@ func Flatten(st interface{}, opts ...Option) (fields []FlatField, err error) {
 
 func hasValue(i interface{}, index []int) (ok bool) {
   defer func() {
-    // FieldByIndex 取不到值时，会panic
-    if r := recover(); r != nil {
-      ok = false
-    }
+   // FieldByIndex 取不到值时，会panic
+   if r := recover(); r != nil {
+     ok = false
+   }
   }()
 
   value := reflect.ValueOf(i)
@@ -97,11 +97,12 @@ func hasValue(i interface{}, index []int) (ok bool) {
   if value.Kind() == reflect.Ptr && value.IsNil() {
     return false
   }
+  value = value.Elem()
 
   return value.FieldByIndex(index).IsValid()
 }
 
-func flat(input reflect.StructField, flds []reflect.StructField, opt *option) {
+func flat(input reflect.StructField, flds *[]reflect.StructField, opt *option) {
   isUnexported := input.PkgPath != ""
   if input.Anonymous {
     t := input.Type
@@ -121,7 +122,7 @@ func flat(input reflect.StructField, flds []reflect.StructField, opt *option) {
 
   name := opt.nameF(input.Tag)
   if !input.Anonymous || (input.Anonymous && name != "") {
-    flds = append(flds, input)
+    *flds = append(*flds, input)
     return
   }
 
