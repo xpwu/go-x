@@ -3,6 +3,7 @@ package flatfield
 import (
   "errors"
   "reflect"
+  "sort"
 )
 
 type option struct {
@@ -24,7 +25,7 @@ func Name(nf func(tag reflect.StructTag)(name string)) Option {
 // 3、去掉所有的非导出field
 // 判断重名的名字来源：1、取tag中的名字；2、取FieldName
 // 如果匿名struct通过tag能够取到名字，就不认为是匿名struct
-// 返回的排序按照struct field的代码书写顺序, breadth-first search over the set of structs // todo breadth-first
+// 返回的排序按照struct field的代码书写顺序, breadth-first 而排
 // hasValue: 此域是否有合法的值
 
 type FlatField struct {
@@ -55,13 +56,27 @@ func Flatten(st interface{}, opts ...Option) (fields []FlatField, err error) {
   flds := make([]reflect.StructField, 0)
 
   for i := 0; i < typ.NumField(); i++ {
-    flat(typ.Field(i), nameSet, flds, op)
+    flat(typ.Field(i), flds, op)
   }
 
-  fields = make([]FlatField, len(flds))
-  for i := range flds {
-    fields[i].SField = &flds[i]
-    fields[i].HasValue = hasValue(i, flds[i].Index)
+  byBreadthFirst(flds).Sort()
+
+  fields = make([]FlatField, 0, len(flds))
+  for i,f := range flds {
+    name := op.nameF(f.Tag)
+    if name == "" {
+      name = f.Name
+    }
+    // 重名了，tag设置而引起
+    if nameSet[name] {
+      continue
+    }
+    nameSet[name] = true
+
+    fields = append(fields, FlatField{
+      SField:   &flds[i],
+      HasValue: hasValue(st, flds[i].Index),
+    })
   }
 
   return
@@ -86,7 +101,7 @@ func hasValue(i interface{}, index []int) (ok bool) {
   return value.FieldByIndex(index).IsValid()
 }
 
-func flat(input reflect.StructField, nameSet map[string]bool, flds []reflect.StructField, opt *option) {
+func flat(input reflect.StructField, flds []reflect.StructField, opt *option) {
   isUnexported := input.PkgPath != ""
   if input.Anonymous {
     t := input.Type
@@ -106,10 +121,7 @@ func flat(input reflect.StructField, nameSet map[string]bool, flds []reflect.Str
 
   name := opt.nameF(input.Tag)
   if !input.Anonymous || (input.Anonymous && name != "") {
-    if !nameSet[name] {
-      flds = append(flds, input)
-      nameSet[name] = true
-    }
+    flds = append(flds, input)
     return
   }
 
@@ -124,26 +136,38 @@ func flat(input reflect.StructField, nameSet map[string]bool, flds []reflect.Str
   }
   // t is struct
   for i := 0; i < t.NumField(); i++ {
-    flat(t.Field(i), nameSet, flds, opt)
+    flat(t.Field(i), flds, opt)
   }
 }
 
-//// byIndex sorts field by index sequence.
-//type byIndex []field
-//
-//func (x byIndex) Len() int { return len(x) }
-//
-//func (x byIndex) Swap(i, j int) { x[i], x[j] = x[j], x[i] }
-//
-//func (x byIndex) Less(i, j int) bool {
-//  for k, xik := range x[i].index {
-//    if k >= len(x[j].index) {
-//      return false
-//    }
-//    if xik != x[j].index[k] {
-//      return xik < x[j].index[k]
-//    }
-//  }
-//  return len(x[i].index) < len(x[j].index)
-//}
+// byBreadthFirst: sorts field by byBreadthFirst.
+type byBreadthFirst []reflect.StructField
+
+func (x byBreadthFirst) Len() int { return len(x) }
+
+func (x byBreadthFirst) Swap(i, j int) { x[i], x[j] = x[j], x[i] }
+
+func (x byBreadthFirst) Less(i, j int) bool {
+  indexL := x[i].Index
+  indexR := x[j].Index
+  // 深度小的在前
+  if len(indexL) != len(indexR) {
+    return len(indexL) < len(indexR)
+  }
+  // 序号小的在前
+  for ii,lv := range indexL {
+    rv := indexR[ii]
+    if lv != rv {
+      return lv < rv
+    }
+  }
+
+  // 不会存在两个index完全一样的field
+  panic("same []index is impossible")
+}
+
+func (x byBreadthFirst) Sort() {
+  sort.Sort(x)
+}
+
 
