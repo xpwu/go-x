@@ -9,14 +9,12 @@ func (s Slice) Kind() Kind {
   return SliceK
 }
 
-func (s Slice) Value(i interface{}, name func(tag reflect.StructTag) (name string)) error {
-  value := reflect.ValueOf(i)
+func (s Slice) ToValue(i interface{}, name func(tag reflect.StructTag) (name string)) error {
+  value := indirect(i, false)
   if !value.IsValid() {
     // skip
     return nil
   }
-
-  value = indirect(value, false)
 
   // Check type of target.
   switch value.Kind() {
@@ -38,7 +36,7 @@ func (s Slice) Value(i interface{}, name func(tag reflect.StructTag) (name strin
   }
 
   for i := 0; i < value.Len() && i < len(s); i++ {
-    if err := s[i].Value(value.Index(i), name); err != nil {
+    if err := s[i].ToValue(value.Index(i), name); err != nil {
       return err
     }
   }

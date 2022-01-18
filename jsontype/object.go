@@ -19,7 +19,7 @@ func (o Object) valueInterface(value reflect.Value, name func(tag reflect.Struct
   m := make(map[string]interface{})
   for _, e := range o {
     var i interface{}
-    if err := e.Value.Value(reflect.ValueOf(&i), name); err != nil {
+    if err := e.Value.ToValue(reflect.ValueOf(&i), name); err != nil {
       return err
     }
     m[e.Key] = i
@@ -63,7 +63,7 @@ func (o Object) valueMap(value reflect.Value, name func(tag reflect.StructTag)(n
     }
 
     v := reflect.New(t.Elem()).Elem()
-    if err := e.Value.Value(v, name); err != nil {
+    if err := e.Value.ToValue(v, name); err != nil {
       return err
     }
     if !key.IsValid() {
@@ -122,7 +122,7 @@ oLoop:
       subv = subv.Field(i)
     }
 
-    if err := e.Value.Value(subv, name); err != nil {
+    if err := e.Value.ToValue(subv, name); err != nil {
       return err
     }
   }
@@ -130,13 +130,12 @@ oLoop:
   return nil
 }
 
-func (o Object) Value(i interface{}, name func(tag reflect.StructTag) (name string)) error {
-  value := reflect.ValueOf(i)
+func (o Object) ToValue(i interface{}, name func(tag reflect.StructTag) (name string)) error {
+  value := indirect(i, false)
   if !value.IsValid() {
     // skip
     return nil
   }
-  value = indirect(value, false)
 
   switch value.Kind() {
   case reflect.Interface:

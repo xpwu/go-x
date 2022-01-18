@@ -95,13 +95,12 @@ func (n Number) String() string {
 var jsonNumberType = reflect.TypeOf(json.Number(""))
 var thisNumberType = reflect.TypeOf(NumberWithInt(0))
 
-func (n Number) Value(i interface{}, name func(tag reflect.StructTag) (name string)) error {
-  value := reflect.ValueOf(i)
+func (n Number) ToValue(i interface{}, name func(tag reflect.StructTag) (name string)) error {
+  value := indirect(i, false)
   if !value.IsValid() {
     // skip
     return nil
   }
-  value = indirect(value, false)
 
   if value.Type() == reflect.TypeOf(n) {
     value.Set(reflect.ValueOf(n))

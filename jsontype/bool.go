@@ -9,13 +9,12 @@ func (b Bool) Kind() Kind {
   return BoolK
 }
 
-func (b Bool) Value(i interface{}, name func(tag reflect.StructTag) (name string)) error {
-  value := reflect.ValueOf(i)
+func (b Bool) ToValue(v interface{}, name func(tag reflect.StructTag) (name string)) error {
+  value := indirect(v, false)
   if !value.IsValid() {
     // skip
     return nil
   }
-  value = indirect(value, false)
 
   switch value.Kind() {
   case reflect.Bool:

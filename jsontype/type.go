@@ -17,7 +17,8 @@ const (
 
 type Type interface {
 	Kind() Kind
-	Value(i interface{}, name func(tag reflect.StructTag) (name string)) error
+	// 把值转换为value
+	ToValue(value interface{}, name func(tag reflect.StructTag) (name string)) error
 }
 
 type Null struct {}

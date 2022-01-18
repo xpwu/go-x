@@ -13,7 +13,20 @@ import (
 // until it gets to a non-pointer.
 // If decodingNull is true, indirect stops at the first settable pointer so it
 // can be set to nil.
-func indirect(v reflect.Value, decodingNull bool) reflect.Value {
+func indirect(i interface{}, decodingNull bool) reflect.Value {
+  v := reflect.Value{}
+  switch v1 := i.(type) {
+  case reflect.Value:
+    v = v1
+  default:
+    v = reflect.ValueOf(i)
+  }
+
+  if !v.IsValid() {
+    // skip
+    return v
+  }
+
   // Issue #24153 indicates that it is generally not a guaranteed property
   // that you may round-trip a reflect.Value by calling Value.Addr().Elem()
   // and expect the value to still be settable for values derived from

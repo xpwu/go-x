@@ -71,13 +71,12 @@ func isValidNumber(s string) bool {
   return s == ""
 }
 
-func (s String) Value(i interface{}, name func(tag reflect.StructTag) (name string)) error {
-  value := reflect.ValueOf(i)
+func (s String) ToValue(i interface{}, name func(tag reflect.StructTag) (name string)) error {
+  value := indirect(i, false)
   if !value.IsValid() {
     // skip
     return nil
   }
-  value = indirect(value, false)
 
   switch value.Kind() {
   default:
