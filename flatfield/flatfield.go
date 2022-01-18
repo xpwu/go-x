@@ -25,9 +25,9 @@ func Name(nf func(tag reflect.StructTag)(name string)) Option {
 // 3、去掉所有的非导出field
 // 判断重名的名字来源：1、取tag中的名字；2、取FieldName
 // 如果匿名struct通过tag能够取到名字，就不认为是匿名struct
-// 返回的排序按照struct field的代码书写顺序, breadth-first 而排
-// hasValue: 此域是否有合法的值
-
+// 返回的排序按照struct field的代码书写顺序, breadth-first。与FieldByNameFunc类同
+// HasValue: 此域是否有合法的值
+// []SField.Index 存放的是相对于参数st计算的index，可用于FieldByIndex()方法
 type FlatField struct {
   SField *reflect.StructField
   HasValue bool
@@ -137,7 +137,11 @@ func flat(input reflect.StructField, flds *[]reflect.StructField, opt *option) {
   }
   // t is struct
   for i := 0; i < t.NumField(); i++ {
-    flat(t.Field(i), flds, opt)
+    // Field() 只是返回本层的index, 需要与上层的index做合并
+    f := t.Field(i)
+    f.Index = append(f.Index[:0], input.Index...)
+    f.Index = append(f.Index, i)
+    flat(f, flds, opt)
   }
 }
 
