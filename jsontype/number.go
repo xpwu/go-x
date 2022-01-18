@@ -22,7 +22,7 @@ func NumberWithFloat(f float64) Number {
   return Number{f: &f}
 }
 
-func (n Number) Int() (v int64, err error) {
+func (n Number) Int64() (v int64, err error) {
   if n.i != nil {
     return *n.i, nil
   }
@@ -30,23 +30,15 @@ func (n Number) Int() (v int64, err error) {
     return int64(*n.f), nil
   }
   if n.str != nil {
-    r, err := strconv.ParseInt(*n.str, 10, 64)
-    if err != nil {
-      return 0, err
-    }
-    return r, nil
+    return strconv.ParseInt(*n.str, 10, 64)
   }
 
   return 0, nil
 }
 
-func (n Number) Uint() (v uint64, err error) {
+func (n Number) Uint64() (v uint64, err error) {
   if n.str != nil {
-    r, err := strconv.ParseUint(*n.str, 10, 64)
-    if err != nil {
-      return 0, err
-    }
-    return r, nil
+    return strconv.ParseUint(*n.str, 10, 64)
   }
   if n.i != nil {
     return uint64(*n.i), nil
@@ -124,14 +116,14 @@ func (n Number) ToValue(i interface{}, name func(tag reflect.StructTag) (name st
     value.Set(reflect.ValueOf(n))
 
   case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-    v, err := n.Int()
+    v, err := n.Int64()
     if err != nil || value.OverflowInt(v) {
       return &json.UnmarshalTypeError{Value: "number " + n.String(), Type: value.Type()}
     }
     value.SetInt(v)
 
   case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
-    v, err := n.Uint()
+    v, err := n.Uint64()
     if err != nil || value.OverflowUint(v) {
       return &json.UnmarshalTypeError{Value: "number " + n.String(), Type: value.Type()}
     }
