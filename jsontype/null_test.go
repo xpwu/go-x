@@ -5,7 +5,7 @@ import (
   "testing"
 )
 
-func TestToValueInterface(t *testing.T) {
+func TestNull2Interface(t *testing.T) {
   a := assert.New(t)
 
   n := Null{}
@@ -16,7 +16,7 @@ func TestToValueInterface(t *testing.T) {
   }
 }
 
-func TestToValueMap(t *testing.T) {
+func TestNull2Map(t *testing.T) {
   a := assert.New(t)
 
   n := Null{}
@@ -27,7 +27,7 @@ func TestToValueMap(t *testing.T) {
   }
 }
 
-func TestToValueSlice(t *testing.T) {
+func TestNull2Slice(t *testing.T) {
   a := assert.New(t)
 
   n := Null{}
@@ -38,7 +38,7 @@ func TestToValueSlice(t *testing.T) {
   }
 }
 
-func TestToValuePtr(t *testing.T) {
+func TestNull2Ptr(t *testing.T) {
   a := assert.New(t)
 
   n := Null{}
