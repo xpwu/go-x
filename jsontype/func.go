@@ -76,6 +76,10 @@ func indirect(i interface{}, decodingNull bool) reflect.Value {
       break
     }
     if v.IsNil() {
+      if !v.CanSet() {
+        // skip
+        return reflect.Value{}
+      }
       v.Set(reflect.New(v.Type().Elem()))
     }
 
