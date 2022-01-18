@@ -39,3 +39,13 @@ func TestBool2Value(t *testing.T) {
 
   a.Equal(true, b)
 }
+
+func TestBool2Ptr(t *testing.T) {
+  a := assert.New(t)
+  
+  var b *bool
+  B := Bool(true)
+  a.NoError(B.ToValue(&b, dummyName))
+
+  a.Equal(true, *b)
+}
