@@ -4,6 +4,7 @@ import (
   "encoding/json"
   "github.com/stretchr/testify/assert"
   "math"
+  "reflect"
   "testing"
 )
 
@@ -119,11 +120,15 @@ func TestNumber_ToValue_2Number(t *testing.T) {
   n := NumberWithStr("5")
 
   n2 := NumberWithInt(7)
-  if !a.NoError(n.ToValue(&n2, dummyName)) {
-    return
+  if a.NoError(n.ToValue(&n2, dummyName)) {
+    a.Equal(n, n2)
   }
 
-  a.Equal(n, n2)
+  n2 = NumberWithInt(10)
+  v := reflect.ValueOf(&n2)
+  if a.NoError(n.ToValue(v, dummyName)) {
+   a.Equal(n, n2)
+  }
 }
 
 func TestNumber_ToValue_2JsonNumber(t *testing.T) {
