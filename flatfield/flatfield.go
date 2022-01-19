@@ -27,7 +27,7 @@ func Name(nf func(tag reflect.StructTag)(name string)) Option {
 // 如果匿名struct通过tag能够取到名字，就不认为是匿名struct
 // 返回的排序按照struct field的代码书写顺序, breadth-first。与FieldByNameFunc类同
 // HasValue: 此域是否有合法的值
-// []SField.Index 存放的是相对于参数st计算的index，可用于FieldByIndex()方法
+// SField.[]Index 存放的是相对于参数st计算的index，可用于 reflect.Type / reflect.Value 的 FieldByIndex 方法
 type FlatField struct {
   SField *reflect.StructField
   HasValue bool
