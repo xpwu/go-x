@@ -13,6 +13,11 @@ func (n Null) ToValue(i interface{}, name func(tag reflect.StructTag) (name stri
     return nil
   }
 
+  if value.Type() == reflect.TypeOf(n) {
+    value.Set(reflect.ValueOf(n))
+    return nil
+  }
+
   switch value.Kind() {
   case reflect.Interface, reflect.Ptr, reflect.Map, reflect.Slice:
     value.Set(reflect.Zero(value.Type()))

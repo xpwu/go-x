@@ -137,6 +137,11 @@ func (o Object) ToValue(i interface{}, name func(tag reflect.StructTag) (name st
     return nil
   }
 
+  if value.Type() == reflect.TypeOf(o) {
+    value.Set(reflect.ValueOf(o))
+    return nil
+  }
+
   switch value.Kind() {
   case reflect.Interface:
     return o.valueInterface(value, name)

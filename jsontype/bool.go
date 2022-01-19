@@ -16,6 +16,11 @@ func (b Bool) ToValue(v interface{}, name func(tag reflect.StructTag) (name stri
     return nil
   }
 
+  if value.Type() == reflect.TypeOf(b) {
+    value.Set(reflect.ValueOf(b))
+    return nil
+  }
+
   switch value.Kind() {
   case reflect.Bool:
     value.SetBool(bool(b))

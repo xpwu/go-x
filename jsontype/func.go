@@ -18,6 +18,8 @@ func indirect(i interface{}, decodingNull bool) reflect.Value {
   switch v1 := i.(type) {
   case reflect.Value:
     v = v1
+  case *reflect.Value:
+    v = *v1
   default:
     v = reflect.ValueOf(i)
   }

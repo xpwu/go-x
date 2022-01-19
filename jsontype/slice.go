@@ -16,6 +16,11 @@ func (s Slice) ToValue(i interface{}, name func(tag reflect.StructTag) (name str
     return nil
   }
 
+  if value.Type() == reflect.TypeOf(s) {
+    value.Set(reflect.ValueOf(s))
+    return nil
+  }
+
   // Check type of target.
   switch value.Kind() {
   default:

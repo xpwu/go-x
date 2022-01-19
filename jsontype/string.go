@@ -78,6 +78,11 @@ func (s String) ToValue(i interface{}, name func(tag reflect.StructTag) (name st
     return nil
   }
 
+  if value.Type() == reflect.TypeOf(s) {
+    value.Set(reflect.ValueOf(s))
+    return nil
+  }
+
   switch value.Kind() {
   default:
     return &json.UnmarshalTypeError{Value: "string", Type: value.Type()}
