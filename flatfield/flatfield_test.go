@@ -117,3 +117,5 @@ func TestFlatten(t *testing.T) {
   	//  ", tag:", f.SField.Tag, ", type:", f.SField.Type.String(), ", hasValue:", f.HasValue)
   }
 }
+
+// todo 测试最大嵌套；测试缓存；测试自己嵌套自己
