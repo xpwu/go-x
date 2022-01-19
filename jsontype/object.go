@@ -3,6 +3,7 @@ package jsontype
 import (
   "bytes"
   "encoding/json"
+  "fmt"
   "github.com/xpwu/go-x/flatfield"
   "reflect"
   "strconv"
@@ -137,7 +138,12 @@ oLoop:
       subv = subv.Field(i)
     }
 
-    if err := e.Value.Unmarshal(subv, name); err != nil {
+    if err = e.Value.Unmarshal(subv, name); err != nil {
+      switch e := err.(type) {
+      case *json.UnmarshalTypeError:
+
+        e.Field += fmt.Sprintf(".{%v}%s", f.Index, value.Type().FieldByIndex(f.Index).Name)
+      }
       return err
     }
   }

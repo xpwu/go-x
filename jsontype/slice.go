@@ -2,6 +2,7 @@ package jsontype
 
 import (
   "encoding/json"
+  "fmt"
   "reflect"
 )
 
@@ -41,6 +42,10 @@ func (s Slice) Unmarshal(i interface{}, name func(tag reflect.StructTag) (name s
     v := make([]interface{}, len(s), len(s))
     for i := 0; i < len(s) && i < len(v); i++ {
       if err := s[i].Unmarshal(&v[i], name); err != nil {
+        switch e := err.(type) {
+        case *json.UnmarshalTypeError:
+          e.Field += fmt.Sprintf(".[%d]", i)
+        }
         return err
       }
     }
@@ -56,6 +61,10 @@ func (s Slice) Unmarshal(i interface{}, name func(tag reflect.StructTag) (name s
 
     for i := 0; i < value.Len() && i < len(s); i++ {
       if err := s[i].Unmarshal(value.Index(i), name); err != nil {
+        switch e := err.(type) {
+        case *json.UnmarshalTypeError:
+          e.Field += fmt.Sprintf(".[%d]", i)
+        }
         return err
       }
     }

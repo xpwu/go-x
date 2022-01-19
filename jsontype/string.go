@@ -3,7 +3,6 @@ package jsontype
 import (
   "encoding/base64"
   "encoding/json"
-  "fmt"
   "reflect"
 )
 
@@ -102,7 +101,7 @@ func (s String) Unmarshal(i interface{}, name func(tag reflect.StructTag) (name 
     value.SetBytes(b[:n])
   case reflect.String:
     if value.Type() == jsonNumberType && !isValidNumber(string(s)) {
-      return fmt.Errorf("json: invalid number literal, trying to unmarshal %s into Number", s)
+      return &json.UnmarshalTypeError{Value: "string", Type: value.Type()}
     }
     value.SetString(string(s))
   case reflect.Interface:
@@ -112,7 +111,7 @@ func (s String) Unmarshal(i interface{}, name func(tag reflect.StructTag) (name 
     value.Set(reflect.ValueOf(string(s)))
   case reflect.Struct:
     if value.Type() == thisNumberType && !isValidNumber(string(s)) {
-      return fmt.Errorf("json: invalid number literal, trying to unmarshal %s into Number", s)
+      return &json.UnmarshalTypeError{Value: "string", Type: value.Type()}
     }
     value.Set(reflect.ValueOf(NumberWithStr(string(s))))
   }

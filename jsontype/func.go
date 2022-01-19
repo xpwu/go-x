@@ -115,8 +115,25 @@ func toString(value reflect.Value) (str string, ok bool) {
 
 var end = errors.New("end")
 
-func FromInterface(i interface{}, tryTag func(tag reflect.StructTag) (key, tips string)) Type {
-  return FromValue(reflect.ValueOf(i), tryTag)
+func FromGoType(goType interface{}, tryTag func(tag reflect.StructTag) (key, tips string)) Type {
+  return FromValue(reflect.ValueOf(goType), tryTag)
+}
+
+func ToGoType(t Type, goType interface{}, name func(tag reflect.StructTag) (name string)) error {
+  err := t.Unmarshal(goType, name)
+  if err == nil {
+    return err
+  }
+
+  switch e := err.(type) {
+  case *json.UnmarshalTypeError:
+    t := reflect.TypeOf(goType)
+    if t.Kind() == reflect.Struct {
+      e.Struct = t.String()
+    }
+  }
+
+  return err
 }
 
 func FromValue(value reflect.Value, tryTag func(tag reflect.StructTag) (key, tips string)) Type {
@@ -272,7 +289,7 @@ func FromJsonDecoder(decoder *json.Decoder) (value Type, err error) {
         if err != nil {
           return nil, err
         }
-        // todo key.(String)
+
         ret = append(ret, objectElem{Key: string(key.(String)), Value: v})
       }
       if err == end {
