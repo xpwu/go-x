@@ -80,5 +80,11 @@ func TestSlice_ToValue_2Slice(t *testing.T) {
   a.Equal(s0[1].String(), sn[1])
   a.Equal(s0[2].String(), sn[2])
   a.Equal(s0[3].String(), sn[3])
+
+  var slice Slice
+  if !a.NoError(s.ToValue(&slice, dummyName)) {
+    return
+  }
+  a.Equal(s, slice)
 }
 
