@@ -295,3 +295,7 @@ func FromJson(jsn []byte) (value Type, err error) {
 
   return FromJsonDecoder(decoder)
 }
+
+func ToJson(value Type) ([]byte, error) {
+  return json.Marshal(value)
+}
