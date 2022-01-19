@@ -118,4 +118,4 @@ func TestFlatten(t *testing.T) {
   }
 }
 
-// todo 测试最大嵌套；测试缓存；测试自己嵌套自己
+// todo 测试最大嵌套；测试自己嵌套自己

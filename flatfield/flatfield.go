@@ -37,6 +37,7 @@ type FlatField struct {
 const maxNested = 100
 
 // 因为op.nameF是运行时动态变化的，同一st在不同的nameF执行下生成的fields会有变化，所以没有全局缓存
+// 因为 []Index 是相对于顶层struct的位置，相同的类型在不同的位置，index会不同，所以本函数内，也无法做缓存，
 func Flatten(st interface{}, opts ...Option) (fields []FlatField, err error) {
   op := &option{
     nameF: func(tag reflect.StructTag) string {
@@ -68,10 +69,8 @@ func Flatten(st interface{}, opts ...Option) (fields []FlatField, err error) {
   nameSet := map[string]bool{}
   flds := make([]reflect.StructField, 0)
 
-  cache := map[reflect.Type][]reflect.StructField{}
-
   for i := 0; i < typ.NumField(); i++ {
-    flat(typ, typ.Field(i), &flds, op, 1, cache)
+    flat(typ, typ.Field(i), &flds, op, 1)
   }
 
   byBreadthFirst(flds).Sort()
@@ -118,7 +117,7 @@ func hasValue(i interface{}, index []int) (ok bool) {
 }
 
 func flat(parentType reflect.Type, input reflect.StructField, flds *[]reflect.StructField,
-  opt *option, depth int, cache map[reflect.Type][]reflect.StructField) {
+  opt *option, depth int) {
   if depth > maxNested {
     return
   }
@@ -160,19 +159,14 @@ func flat(parentType reflect.Type, input reflect.StructField, flds *[]reflect.St
     return
   }
 
-  thisFlds := make([]reflect.StructField, 0)
-
   // t is struct
   for i := 0; i < t.NumField(); i++ {
     // Field() 只是返回本层的index, 需要与上层的index做合并
     f := t.Field(i)
     f.Index = append(f.Index[:0], input.Index...)
     f.Index = append(f.Index, i)
-    flat(t, f, &thisFlds, opt, depth+1, cache)
+    flat(t, f, flds, opt, depth+1)
   }
-
-  cache[t] = thisFlds
-  *flds = append(*flds, thisFlds...)
 }
 
 // byBreadthFirst: sorts field by byBreadthFirst.
