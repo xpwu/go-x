@@ -139,5 +139,74 @@ func TestNumber_ToValue_2JsonNumber(t *testing.T) {
 }
 
 func TestNumber_ToValue_2IntXXX(t *testing.T) {
+  a := assert.New(t)
+  n0 := NumberWithStr("5")
+
+  var n int = 0
+  var n8 int8 = 0
+  var n16 int16 = 0
+  var n32 int32 = 0
+  var n64 int64 = 0
+
+  if a.NoError(n0.ToValue(&n, dummyName)) {
+    a.Equal(5, n)
+  }
+  if a.NoError(n0.ToValue(&n8, dummyName)) {
+    a.Equal(int8(5), n8)
+  }
+  if a.NoError(n0.ToValue(&n16, dummyName)) {
+    a.Equal(int16(5), n16)
+  }
+  if a.NoError(n0.ToValue(&n32, dummyName)) {
+    a.Equal(int32(5), n32)
+  }
+  if a.NoError(n0.ToValue(&n64, dummyName)) {
+    a.Equal(int64(5), n64)
+  }
+
+}
+
+func TestNumber_ToValue_2UintXXX(t *testing.T) {
+  a := assert.New(t)
+  n0 := NumberWithStr("5")
+
+  var n uint = 0
+  var n8 uint8 = 0
+  var n16 uint16 = 0
+  var n32 uint32 = 0
+  var n64 uint64 = 0
+
+  if a.NoError(n0.ToValue(&n, dummyName)) {
+    a.Equal(uint(5), n)
+  }
+  if a.NoError(n0.ToValue(&n8, dummyName)) {
+    a.Equal(uint8(5), n8)
+  }
+  if a.NoError(n0.ToValue(&n16, dummyName)) {
+    a.Equal(uint16(5), n16)
+  }
+  if a.NoError(n0.ToValue(&n32, dummyName)) {
+    a.Equal(uint32(5), n32)
+  }
+  if a.NoError(n0.ToValue(&n64, dummyName)) {
+    a.Equal(uint64(5), n64)
+  }
+
+}
+
+func TestNumber_ToValue_2FloatXX(t *testing.T) {
+  a := assert.New(t)
+  n0 := NumberWithStr("5")
+
+  var n float32 = 0
+  var n8 float64 = 0
+
+  if a.NoError(n0.ToValue(&n, dummyName)) {
+    a.LessOrEqual(math.Abs(float64(5-n)), math.SmallestNonzeroFloat64)
+  }
+  if a.NoError(n0.ToValue(&n8, dummyName)) {
+    a.LessOrEqual(math.Abs(5-n8), math.SmallestNonzeroFloat64)
+  }
+
 }
 
