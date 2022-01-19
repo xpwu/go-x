@@ -13,11 +13,18 @@ func (o Object) Kind() Kind {
 }
 
 func (o Object) String() string {
-  data, err := json.Marshal(&o)
+  data, err := json.Marshal(o)
   if err != nil {
     return "Object.String() error! " + err.Error()
   }
-  return string(data)
+
+  buffer := bytes.Buffer{}
+  err = json.Indent(&buffer, data, "", "\t")
+  if err != nil {
+    return "Object.String() error! " + err.Error()
+  }
+
+  return buffer.String()
 }
 
 func (o Object) valueInterface(value reflect.Value, name func(tag reflect.StructTag)(name string)) error {
@@ -162,11 +169,11 @@ func (o Object) Unmarshal(i interface{}, name func(tag reflect.StructTag) (name 
   return &json.UnmarshalTypeError{Value: "object ", Type: value.Type()}
 }
 
-func (o *Object) MarshalJSON() ([]byte, error) {
+func (o Object) MarshalJSON() ([]byte, error) {
   buffer := &bytes.Buffer{}
   buffer.WriteRune('{')
 
-  for i, elem := range *o {
+  for i, elem := range o {
     if i != 0 {
       buffer.WriteRune(',')
     }
