@@ -10,7 +10,7 @@ func (n Null) String() string {
   return "nil"
 }
 
-func (n Null) ToValue(i interface{}, name func(tag reflect.StructTag) (name string)) error {
+func (n Null) Unmarshal(i interface{}, name func(tag reflect.StructTag) (name string)) error {
   value := indirect(i, true)
   if !value.IsValid() {
     // skip

@@ -2,7 +2,6 @@ package jsontype
 
 import (
   "encoding/json"
-  "fmt"
   "reflect"
 )
 
@@ -11,10 +10,14 @@ func (s Slice) Kind() Kind {
 }
 
 func (s Slice) String() string {
-  return fmt.Sprint([]Type(s))
+  data, err := json.Marshal(s)
+  if err != nil {
+    return "Slice.String() error! " + err.Error()
+  }
+  return string(data)
 }
 
-func (s Slice) ToValue(i interface{}, name func(tag reflect.StructTag) (name string)) error {
+func (s Slice) Unmarshal(i interface{}, name func(tag reflect.StructTag) (name string)) error {
   value := indirect(i, false)
   if !value.IsValid() {
     // skip
@@ -37,7 +40,7 @@ func (s Slice) ToValue(i interface{}, name func(tag reflect.StructTag) (name str
     }
     v := make([]interface{}, len(s), len(s))
     for i := 0; i < len(s) && i < len(v); i++ {
-      if err := s[i].ToValue(&v[i], name); err != nil {
+      if err := s[i].Unmarshal(&v[i], name); err != nil {
         return err
       }
     }
@@ -52,7 +55,7 @@ func (s Slice) ToValue(i interface{}, name func(tag reflect.StructTag) (name str
     }
 
     for i := 0; i < value.Len() && i < len(s); i++ {
-      if err := s[i].ToValue(value.Index(i), name); err != nil {
+      if err := s[i].Unmarshal(value.Index(i), name); err != nil {
         return err
       }
     }

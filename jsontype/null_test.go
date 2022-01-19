@@ -5,46 +5,46 @@ import (
   "testing"
 )
 
-func TestNull2Interface(t *testing.T) {
+func TestNull_Unmarshal_2Interface(t *testing.T) {
   a := assert.New(t)
 
   n := Null{}
 
   var i interface{}
-  if a.NoError(n.ToValue(&i, dummyName)) {
+  if a.NoError(n.Unmarshal(&i, dummyName)) {
     a.Nil(i)
   }
 }
 
-func TestNull2Map(t *testing.T) {
+func TestNull_Unmarshal_2Map(t *testing.T) {
   a := assert.New(t)
 
   n := Null{}
 
   m := make(map[int]int)
-  if a.NoError(n.ToValue(&m, dummyName)) {
+  if a.NoError(n.Unmarshal(&m, dummyName)) {
     a.Nil(m)
   }
 }
 
-func TestNull2Slice(t *testing.T) {
+func TestNull_Unmarshal_2Slice(t *testing.T) {
   a := assert.New(t)
 
   n := Null{}
 
   m := make([]int, 0)
-  if a.NoError(n.ToValue(&m, dummyName)) {
+  if a.NoError(n.Unmarshal(&m, dummyName)) {
     a.Nil(m)
   }
 }
 
-func TestNull2Ptr(t *testing.T) {
+func TestNull_Unmarshal_2Ptr(t *testing.T) {
   a := assert.New(t)
 
   n := Null{}
 
   var m *interface{}
-  if a.NoError(n.ToValue(&m, dummyName)) {
+  if a.NoError(n.Unmarshal(&m, dummyName)) {
     a.Nil(m)
   }
 }

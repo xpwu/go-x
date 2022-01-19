@@ -99,12 +99,12 @@ func TestNumber_Float(t *testing.T) {
 
 }
 
-func TestNumber_ToValue_2Interface(t *testing.T) {
+func TestNumber_Unmarshal_2Interface(t *testing.T) {
   a := assert.New(t)
   n := NumberWithStr("5")
 
   var i interface{}
-  if !a.NoError(n.ToValue(&i, dummyName)) {
+  if !a.NoError(n.Unmarshal(&i, dummyName)) {
     return
   }
 
@@ -115,35 +115,35 @@ func TestNumber_ToValue_2Interface(t *testing.T) {
   a.Equal(5, int(m))
 }
 
-func TestNumber_ToValue_2Number(t *testing.T) {
+func TestNumber_Unmarshal_2Number(t *testing.T) {
   a := assert.New(t)
   n := NumberWithStr("5")
 
   n2 := NumberWithInt(7)
-  if a.NoError(n.ToValue(&n2, dummyName)) {
+  if a.NoError(n.Unmarshal(&n2, dummyName)) {
     a.Equal(n, n2)
   }
 
   n2 = NumberWithInt(10)
   v := reflect.ValueOf(&n2)
-  if a.NoError(n.ToValue(v, dummyName)) {
+  if a.NoError(n.Unmarshal(v, dummyName)) {
    a.Equal(n, n2)
   }
 }
 
-func TestNumber_ToValue_2JsonNumber(t *testing.T) {
+func TestNumber_Unmarshal_2JsonNumber(t *testing.T) {
   a := assert.New(t)
   n := NumberWithStr("5")
 
   n2 := json.Number("10")
-  if !a.NoError(n.ToValue(&n2, dummyName)) {
+  if !a.NoError(n.Unmarshal(&n2, dummyName)) {
     return
   }
 
   a.Equal(n.String(), n2.String())
 }
 
-func TestNumber_ToValue_2IntXXX(t *testing.T) {
+func TestNumber_Unmarshal_2IntXXX(t *testing.T) {
   a := assert.New(t)
   n0 := NumberWithStr("5")
 
@@ -153,25 +153,25 @@ func TestNumber_ToValue_2IntXXX(t *testing.T) {
   var n32 int32 = 0
   var n64 int64 = 0
 
-  if a.NoError(n0.ToValue(&n, dummyName)) {
+  if a.NoError(n0.Unmarshal(&n, dummyName)) {
     a.Equal(5, n)
   }
-  if a.NoError(n0.ToValue(&n8, dummyName)) {
+  if a.NoError(n0.Unmarshal(&n8, dummyName)) {
     a.Equal(int8(5), n8)
   }
-  if a.NoError(n0.ToValue(&n16, dummyName)) {
+  if a.NoError(n0.Unmarshal(&n16, dummyName)) {
     a.Equal(int16(5), n16)
   }
-  if a.NoError(n0.ToValue(&n32, dummyName)) {
+  if a.NoError(n0.Unmarshal(&n32, dummyName)) {
     a.Equal(int32(5), n32)
   }
-  if a.NoError(n0.ToValue(&n64, dummyName)) {
+  if a.NoError(n0.Unmarshal(&n64, dummyName)) {
     a.Equal(int64(5), n64)
   }
 
 }
 
-func TestNumber_ToValue_2UintXXX(t *testing.T) {
+func TestNumber_Unmarshal_2UintXXX(t *testing.T) {
   a := assert.New(t)
   n0 := NumberWithStr("5")
 
@@ -181,35 +181,35 @@ func TestNumber_ToValue_2UintXXX(t *testing.T) {
   var n32 uint32 = 0
   var n64 uint64 = 0
 
-  if a.NoError(n0.ToValue(&n, dummyName)) {
+  if a.NoError(n0.Unmarshal(&n, dummyName)) {
     a.Equal(uint(5), n)
   }
-  if a.NoError(n0.ToValue(&n8, dummyName)) {
+  if a.NoError(n0.Unmarshal(&n8, dummyName)) {
     a.Equal(uint8(5), n8)
   }
-  if a.NoError(n0.ToValue(&n16, dummyName)) {
+  if a.NoError(n0.Unmarshal(&n16, dummyName)) {
     a.Equal(uint16(5), n16)
   }
-  if a.NoError(n0.ToValue(&n32, dummyName)) {
+  if a.NoError(n0.Unmarshal(&n32, dummyName)) {
     a.Equal(uint32(5), n32)
   }
-  if a.NoError(n0.ToValue(&n64, dummyName)) {
+  if a.NoError(n0.Unmarshal(&n64, dummyName)) {
     a.Equal(uint64(5), n64)
   }
 
 }
 
-func TestNumber_ToValue_2FloatXX(t *testing.T) {
+func TestNumber_Unmarshal_2FloatXX(t *testing.T) {
   a := assert.New(t)
   n0 := NumberWithStr("5")
 
   var n float32 = 0
   var n8 float64 = 0
 
-  if a.NoError(n0.ToValue(&n, dummyName)) {
+  if a.NoError(n0.Unmarshal(&n, dummyName)) {
     a.LessOrEqual(math.Abs(float64(5-n)), math.SmallestNonzeroFloat64)
   }
-  if a.NoError(n0.ToValue(&n8, dummyName)) {
+  if a.NoError(n0.Unmarshal(&n8, dummyName)) {
     a.LessOrEqual(math.Abs(5-n8), math.SmallestNonzeroFloat64)
   }
 

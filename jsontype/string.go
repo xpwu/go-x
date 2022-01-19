@@ -75,7 +75,7 @@ func isValidNumber(s string) bool {
   return s == ""
 }
 
-func (s String) ToValue(i interface{}, name func(tag reflect.StructTag) (name string)) error {
+func (s String) Unmarshal(i interface{}, name func(tag reflect.StructTag) (name string)) error {
   value := indirect(i, false)
   if !value.IsValid() {
     // skip

@@ -14,7 +14,7 @@ func (b Bool) String() string {
   return fmt.Sprint(bool(b))
 }
 
-func (b Bool) ToValue(v interface{}, name func(tag reflect.StructTag) (name string)) error {
+func (b Bool) Unmarshal(v interface{}, name func(tag reflect.StructTag) (name string)) error {
   value := indirect(v, false)
   if !value.IsValid() {
     // skip

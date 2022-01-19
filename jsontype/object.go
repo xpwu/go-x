@@ -13,7 +13,11 @@ func (o Object) Kind() Kind {
 }
 
 func (o Object) String() string {
-  return ""
+  data, err := json.Marshal(&o)
+  if err != nil {
+    return "Object.String() error! " + err.Error()
+  }
+  return string(data)
 }
 
 func (o Object) valueInterface(value reflect.Value, name func(tag reflect.StructTag)(name string)) error {
@@ -23,7 +27,7 @@ func (o Object) valueInterface(value reflect.Value, name func(tag reflect.Struct
   m := make(map[string]interface{})
   for _, e := range o {
     var i interface{}
-    if err := e.Value.ToValue(reflect.ValueOf(&i), name); err != nil {
+    if err := e.Value.Unmarshal(reflect.ValueOf(&i), name); err != nil {
       return err
     }
     m[e.Key] = i
@@ -67,7 +71,7 @@ func (o Object) valueMap(value reflect.Value, name func(tag reflect.StructTag)(n
     }
 
     v := reflect.New(t.Elem()).Elem()
-    if err := e.Value.ToValue(v, name); err != nil {
+    if err := e.Value.Unmarshal(v, name); err != nil {
       return err
     }
     if !key.IsValid() {
@@ -126,7 +130,7 @@ oLoop:
       subv = subv.Field(i)
     }
 
-    if err := e.Value.ToValue(subv, name); err != nil {
+    if err := e.Value.Unmarshal(subv, name); err != nil {
       return err
     }
   }
@@ -134,7 +138,7 @@ oLoop:
   return nil
 }
 
-func (o Object) ToValue(i interface{}, name func(tag reflect.StructTag) (name string)) error {
+func (o Object) Unmarshal(i interface{}, name func(tag reflect.StructTag) (name string)) error {
   value := indirect(i, false)
   if !value.IsValid() {
     // skip

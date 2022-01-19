@@ -10,10 +10,10 @@ func TestSlice_String(t *testing.T) {
   s := Slice(s0)
 
   a := assert.New(t)
-  a.Equal("[str 11 true nil]", s.String())
+  a.Equal("[\"str\",11,true,null]", s.String())
 }
 
-func TestSlice_ToValue_2Interface(t *testing.T) {
+func TestSlice_Unmarshal_2Interface(t *testing.T) {
   a := assert.New(t)
 
   s0 := []Type{String("str"), NumberWithInt(11), Bool(true), Null{}}
@@ -22,7 +22,7 @@ func TestSlice_ToValue_2Interface(t *testing.T) {
 
   var sn interface{}
 
-  if !a.NoError(s.ToValue(&sn, dummyName)) {
+  if !a.NoError(s.Unmarshal(&sn, dummyName)) {
     return
   }
 
@@ -39,21 +39,21 @@ func TestSlice_ToValue_2Interface(t *testing.T) {
   a.Equal(nil, slice[3])
 }
 
-func TestSlice_ToValue_2Array(t *testing.T) {
+func TestSlice_Unmarshal_2Array(t *testing.T) {
   a := assert.New(t)
 
   s0 := []Type{String("str1"), String("str2"), String("str3"), String("str4")}
   s := Slice(s0)
 
   var sn [2]string
-  if !a.NoError(s.ToValue(&sn, dummyName)) {
+  if !a.NoError(s.Unmarshal(&sn, dummyName)) {
     return
   }
   a.Equal(s0[0].String(), sn[0])
   a.Equal(s0[1].String(), sn[1])
 
   s5 := [5]string{"1", "2", "3", "4", "5"}
-  if !a.NoError(s.ToValue(&s5, dummyName)) {
+  if !a.NoError(s.Unmarshal(&s5, dummyName)) {
     return
   }
   a.Equal(s0[0].String(), s5[0])
@@ -64,14 +64,14 @@ func TestSlice_ToValue_2Array(t *testing.T) {
 
 }
 
-func TestSlice_ToValue_2Slice(t *testing.T) {
+func TestSlice_Unmarshal_2Slice(t *testing.T) {
   a := assert.New(t)
 
   s0 := []Type{String("str1"), String("str2"), String("str3"), String("str4")}
   s := Slice(s0)
 
   var sn []string
-  if !a.NoError(s.ToValue(&sn, dummyName)) {
+  if !a.NoError(s.Unmarshal(&sn, dummyName)) {
     return
   }
   a.Equal(len(s0), len(sn), "len()")
@@ -82,7 +82,7 @@ func TestSlice_ToValue_2Slice(t *testing.T) {
   a.Equal(s0[3].String(), sn[3])
 
   var slice Slice
-  if !a.NoError(s.ToValue(&slice, dummyName)) {
+  if !a.NoError(s.Unmarshal(&slice, dummyName)) {
     return
   }
   a.Equal(s, slice)
