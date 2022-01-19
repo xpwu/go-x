@@ -45,7 +45,16 @@ func Flatten(st interface{}, opts ...Option) (fields []FlatField, err error) {
     of(op)
   }
 
-  typ := reflect.TypeOf(st)
+  var typ reflect.Type
+  switch v1 := st.(type) {
+  case reflect.Value:
+    typ = v1.Type()
+  case *reflect.Value:
+    typ = v1.Type()
+  default:
+    typ = reflect.TypeOf(st)
+  }
+
   if typ.Kind() == reflect.Ptr {
     typ = typ.Elem()
   }

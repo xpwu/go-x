@@ -7,7 +7,7 @@ func (n Null) Kind() Kind {
 }
 
 func (n Null) String() string {
-  return "nil"
+  return "<nil>"
 }
 
 func (n Null) Unmarshal(i interface{}, name func(tag reflect.StructTag) (name string)) error {
