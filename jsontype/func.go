@@ -272,6 +272,7 @@ func FromJsonDecoder(decoder *json.Decoder) (value Type, err error) {
         if err != nil {
           return nil, err
         }
+        // todo key.(String)
         ret = append(ret, objectElem{Key: string(key.(String)), Value: v})
       }
       if err == end {

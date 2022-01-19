@@ -33,6 +33,8 @@ type FlatField struct {
   HasValue bool
 }
 
+// todo 处理循环嵌套自己的情况
+
 func Flatten(st interface{}, opts ...Option) (fields []FlatField, err error) {
   op := &option{
     nameF: func(tag reflect.StructTag) string {
