@@ -11,6 +11,10 @@ func (s String) Kind() Kind {
   return StringK
 }
 
+func (s String) String() string {
+  return string(s)
+}
+
 // isValidNumber reports whether s is a valid JSON number literal.
 func isValidNumber(s string) bool {
   // This function implements the JSON numbers grammar.

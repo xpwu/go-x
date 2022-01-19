@@ -1,6 +1,7 @@
 package jsontype
 
 import (
+	"fmt"
 	"reflect"
 )
 
@@ -16,6 +17,7 @@ const (
 )
 
 type Type interface {
+	fmt.Stringer
 	Kind() Kind
 	// 把值转换为value
 	ToValue(value interface{}, name func(tag reflect.StructTag) (name string)) error

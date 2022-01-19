@@ -12,6 +12,10 @@ func (o Object) Kind() Kind {
   return ObjectK
 }
 
+func (o Object) String() string {
+  return ""
+}
+
 func (o Object) valueInterface(value reflect.Value, name func(tag reflect.StructTag)(name string)) error {
   if value.NumMethod() != 0 {
     return &json.UnmarshalTypeError{Value: "object", Type: value.Type()}

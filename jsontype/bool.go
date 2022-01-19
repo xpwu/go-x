@@ -2,11 +2,16 @@ package jsontype
 
 import (
   "encoding/json"
+  "fmt"
   "reflect"
 )
 
 func (b Bool) Kind() Kind {
   return BoolK
+}
+
+func (b Bool) String() string {
+  return fmt.Sprint(bool(b))
 }
 
 func (b Bool) ToValue(v interface{}, name func(tag reflect.StructTag) (name string)) error {
