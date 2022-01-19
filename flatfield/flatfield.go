@@ -33,8 +33,9 @@ type FlatField struct {
   HasValue bool
 }
 
-// todo 处理循环嵌套自己的情况
+// todo 缓存类型; 循环嵌套
 
+// 因为op.nameF是运行时动态变化的，同一st在不同的nameF执行下生成的fields会有变化，所以没有全局缓存
 func Flatten(st interface{}, opts ...Option) (fields []FlatField, err error) {
   op := &option{
     nameF: func(tag reflect.StructTag) string {
@@ -67,7 +68,7 @@ func Flatten(st interface{}, opts ...Option) (fields []FlatField, err error) {
   flds := make([]reflect.StructField, 0)
 
   for i := 0; i < typ.NumField(); i++ {
-    flat(typ.Field(i), &flds, op)
+    flat(typ, typ.Field(i), &flds, op)
   }
 
   byBreadthFirst(flds).Sort()
@@ -113,7 +114,7 @@ func hasValue(i interface{}, index []int) (ok bool) {
   return value.FieldByIndex(index).IsValid()
 }
 
-func flat(input reflect.StructField, flds *[]reflect.StructField, opt *option) {
+func flat(parentType reflect.Type, input reflect.StructField, flds *[]reflect.StructField, opt *option) {
   isUnexported := input.PkgPath != ""
   if input.Anonymous {
     t := input.Type
@@ -146,13 +147,17 @@ func flat(input reflect.StructField, flds *[]reflect.StructField, opt *option) {
     // Ignore embedded and name=="" fields  of non-struct types.
     return
   }
+  if t == parentType {
+    // 根据go的规则，嵌套一个自身的匿名指针，其成员不会显示出来
+    return
+  }
   // t is struct
   for i := 0; i < t.NumField(); i++ {
     // Field() 只是返回本层的index, 需要与上层的index做合并
     f := t.Field(i)
     f.Index = append(f.Index[:0], input.Index...)
     f.Index = append(f.Index, i)
-    flat(f, flds, opt)
+    flat(t, f, flds, opt)
   }
 }
 
