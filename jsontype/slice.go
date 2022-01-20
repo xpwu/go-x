@@ -73,3 +73,24 @@ func (s Slice) Unmarshal(i interface{}, name func(tag reflect.StructTag) (name s
   return nil
 }
 
+func (s Slice) Include(other Type) bool {
+  if other.Kind() != SliceK {
+    return false
+  }
+
+  otherS := other.(Slice)
+  l := len(s)
+  if l > len(otherS) {
+    l = len(otherS)
+  }
+
+  for i := 0; i < l; i++ {
+    if !s[i].Include(otherS[i]) {
+      return false
+    }
+  }
+
+  return true
+}
+
+

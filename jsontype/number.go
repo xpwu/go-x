@@ -143,3 +143,7 @@ func (n Number) Unmarshal(i interface{}, name func(tag reflect.StructTag) (name 
 func (n Number) MarshalJSON() ([]byte, error) {
   return []byte(n.String()), nil
 }
+
+func (n Number) Include(other Type) bool {
+  return other.Kind() == NumberK
+}

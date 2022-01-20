@@ -31,6 +31,9 @@ type Type interface {
 	// Slice -> []interface{}
 	// String -> string
 	Unmarshal(value interface{}, name func(tag reflect.StructTag) (name string)) error
+
+	// a.Include(c) c中的字段，在a中都存在，并且类型相同, a >= c
+	Include(other Type) bool
 }
 
 type Null struct {}

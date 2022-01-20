@@ -261,11 +261,12 @@ func FromJsonDecoder(decoder *json.Decoder) (value Type, err error) {
   case float64:
     return NumberWithFloat(t), nil
   case json.Delim:
+    var key,v Type
     switch t.String() {
     case "[":
       ret := make(Slice, 0)
       for {
-        v, err := FromJsonDecoder(decoder)
+        v, err = FromJsonDecoder(decoder)
         if err != nil {
           break
         }
@@ -279,12 +280,12 @@ func FromJsonDecoder(decoder *json.Decoder) (value Type, err error) {
     case "{":
       ret := make(Object, 0)
       for {
-        key, err := FromJsonDecoder(decoder)
+        key, err = FromJsonDecoder(decoder)
         // may be end
         if err != nil {
           break
         }
-        v, err := FromJsonDecoder(decoder)
+        v, err = FromJsonDecoder(decoder)
         // error
         if err != nil {
           return nil, err

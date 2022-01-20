@@ -199,3 +199,28 @@ func (o Object) MarshalJSON() ([]byte, error) {
 
   return buffer.Bytes(), nil
 }
+
+func (o Object) Include(other Type) bool {
+  if other.Kind() != ObjectK {
+    return false
+  }
+
+  m := make(map[string]Type)
+  for _,e := range o {
+    m[e.Key] = e.Value
+  }
+
+  for _,e := range other.(Object) {
+    v,ok := m[e.Key]
+    if !ok {
+      return false
+    }
+
+    if !v.Include(e.Value) {
+      return false
+    }
+  }
+
+  return true
+}
+

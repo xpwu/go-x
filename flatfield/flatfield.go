@@ -104,14 +104,26 @@ func hasValue(i interface{}, index []int) (ok bool) {
    }
   }()
 
-  value := reflect.ValueOf(i)
+  var value reflect.Value
+  switch v1 := i.(type) {
+  case reflect.Value:
+    value = v1
+  case *reflect.Value:
+    value = *v1
+  default:
+    value = reflect.ValueOf(i)
+  }
+
   if !value.IsValid() {
     return false
   }
   if value.Kind() == reflect.Ptr && value.IsNil() {
     return false
   }
-  value = value.Elem()
+
+  if value.Kind() == reflect.Ptr  {
+    value = value.Elem()
+  }
 
   return value.FieldByIndex(index).IsValid()
 }

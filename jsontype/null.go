@@ -34,3 +34,7 @@ func (n Null) MarshalJSON() ([]byte, error) {
   return []byte("null"), nil
 }
 
+func (n Null) Include(other Type) bool {
+  return other.Kind() == NullK
+}
+

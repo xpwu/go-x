@@ -119,3 +119,7 @@ func (s String) Unmarshal(i interface{}, name func(tag reflect.StructTag) (name 
   return nil
 }
 
+func (s String) Include(other Type) bool {
+  return other.Kind() == StringK
+}
+

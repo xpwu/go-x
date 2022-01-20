@@ -40,3 +40,6 @@ func (b Bool) Unmarshal(v interface{}, name func(tag reflect.StructTag) (name st
   return &json.UnmarshalTypeError{Value: "bool", Type: value.Type()}
 }
 
+func (b Bool) Include(other Type) bool {
+  return other.Kind() == BoolK
+}
