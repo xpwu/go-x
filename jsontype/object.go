@@ -78,7 +78,11 @@ func (o Object) valueMap(value reflect.Value, name func(tag reflect.StructTag)(n
       key = reflect.ValueOf(n).Convert(kt)
     }
 
-    v := reflect.New(t.Elem()).Elem()
+    v := value.MapIndex(key)
+    if !v.IsValid() {
+      v = reflect.New(t.Elem()).Elem()
+    }
+
     if err := e.Value.Unmarshal(v, name); err != nil {
       return err
     }

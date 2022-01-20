@@ -97,3 +97,33 @@ func TestObject_Unmarshal_2Struct(t *testing.T) {
 
   a.Equal("{value1 24 <nil> [str 11 true <nil>] {value1}}", fmt.Sprint(s))
 }
+
+func TestObject_Unmarshal_2Map(t *testing.T) {
+	a := assert.New(t)
+
+	m := map[string]interface{}{}
+	s0 := ""
+	m["stringKey"] = &s0
+	n1 := 5
+	m["numberKey"] = &n1
+	var s3 []interface{}
+	m["sliceKey"] = &s3
+	st := struct {
+		StringKey string `test:"stringKey"`
+	}{}
+	m["structKey"] = &st
+
+	err := object.Unmarshal(&m, func(tag reflect.StructTag) (name string) {
+		return tag.Get("test")
+	})
+	if !a.NoError(err) {
+		return
+	}
+
+	a.Equal(24, n1)
+	a.Equal("value1", s0)
+	a.Equal("value1", st.StringKey)
+	a.Equal(4, len(s3), "len(slice) error")
+	a.Equal("11", s3[1].(Number).String())
+	a.True(s3[2].(bool))
+}
