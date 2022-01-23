@@ -189,8 +189,8 @@ func (o Object) MarshalJSON() ([]byte, error) {
       buffer.WriteRune(',')
     }
     if elem.Tips != "" {
-      // key"-tip" 作为tips的key
-      buffer.WriteString("\"" + elem.Key + "-tips\":\"" + elem.Tips + "\",")
+      // "// "+key 作为tips的key
+      buffer.WriteString("\"// " + elem.Key + "\":\"" + elem.Tips + "\",")
     }
     buffer.WriteString("\"" + elem.Key + "\":")
     v, err := json.Marshal(elem.Value)
