@@ -8,6 +8,7 @@ import (
 
 type option struct {
   nameF func(tag reflect.StructTag) (name string)
+  ignoreF func(name string) bool
 }
 
 type Option func(op *option)
@@ -17,6 +18,14 @@ type Option func(op *option)
 func Name(nf func(tag reflect.StructTag)(name string)) Option {
   return func(op *option) {
     op.nameF = nf
+  }
+}
+
+// ignore field by name
+// name: 经过 Name()Option 处理过的最终名字
+func Ignore(igf func(name string)bool) Option {
+  return func(op *option) {
+    op.ignoreF = igf
   }
 }
 
@@ -42,6 +51,9 @@ func Flatten(st interface{}, opts ...Option) (fields []FlatField, err error) {
   op := &option{
     nameF: func(tag reflect.StructTag) string {
       return ""
+    },
+    ignoreF: func(name string) bool {
+      return false
     },
   }
   for _,of := range opts {
@@ -82,7 +94,7 @@ func Flatten(st interface{}, opts ...Option) (fields []FlatField, err error) {
       name = f.Name
     }
     // 重名了，tag设置而引起
-    if nameSet[name] {
+    if nameSet[name] || op.ignoreF(name) {
       continue
     }
     nameSet[name] = true
