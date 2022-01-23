@@ -34,7 +34,9 @@ var tips = func(tag reflect.StructTag) (key, tips string) {
 }
 
 func TestFromGoType(t *testing.T) {
-  ty := FromGoType(&gotype, tips)
+  ty := FromGoType(&gotype, tips, func(name string) bool {
+    return false
+  })
 
   a := assert.New(t)
   a.Equal(ObjectK, ty.Kind())
@@ -50,7 +52,9 @@ func TestFromGoType(t *testing.T) {
 }
 
 func TestFromJson(t *testing.T) {
-  ty := FromGoType(gotype, tips)
+  ty := FromGoType(gotype, tips, func(name string) bool {
+    return false
+  })
   a := assert.New(t)
 
   jsn := "{\"it-tips\":\"this is int\",\"it\":0,\"fl-tips\":\"this is float\",\"fl\":0,\"Str\":\"\",\"Sli\":[\"s\",\"t\",\"r\"],\"Stu\":{\"Uin\":0,\"Arr-tips\":\"be covered\",\"Arr\":0},\"Arr\":[0,0]}"

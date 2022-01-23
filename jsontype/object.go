@@ -105,6 +105,7 @@ func realName(f *reflect.StructField, name func(tag reflect.StructTag)(name stri
 }
 
 func (o Object) valueStruct(value reflect.Value, name func(tag reflect.StructTag)(name string)) error {
+  // todo: "-"等的处理
   fields,err := flatfield.Flatten(value, flatfield.Name(name))
   if err != nil {
     return err

@@ -115,11 +115,14 @@ func toString(value reflect.Value) (str string, ok bool) {
 
 var end = errors.New("end")
 
-func FromGoType(goType interface{}, tryTag func(tag reflect.StructTag) (key, tips string)) Type {
-  return FromValue(reflect.ValueOf(goType), tryTag)
+func FromGoType(goType interface{},
+  tryTag func(tag reflect.StructTag) (key, tips string),
+  ignore func(name string)bool ) Type {
+  return FromValue(reflect.ValueOf(goType), tryTag, ignore)
 }
 
-func ToGoType(t Type, goType interface{}, name func(tag reflect.StructTag) (name string)) error {
+func ToGoType(t Type, goType interface{},
+  name func(tag reflect.StructTag) (name string)) error {
   err := t.Unmarshal(goType, name)
   if err == nil {
     return err
@@ -136,7 +139,9 @@ func ToGoType(t Type, goType interface{}, name func(tag reflect.StructTag) (name
   return err
 }
 
-func FromValue(value reflect.Value, tryTag func(tag reflect.StructTag) (key, tips string)) Type {
+func FromValue(value reflect.Value,
+  tryTag func(tag reflect.StructTag) (key, tips string),
+  ignore func(name string)bool) Type {
   if !value.IsValid() {
     return nil
   }
@@ -146,7 +151,7 @@ func FromValue(value reflect.Value, tryTag func(tag reflect.StructTag) (key, tip
     if value.IsNil() {
       return Null{}
     }
-    return FromValue(value.Elem(), tryTag)
+    return FromValue(value.Elem(), tryTag, ignore)
   case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint,
     reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
     return NumberWithInt(value.Convert(reflect.TypeOf(int64(0))).Int())
@@ -170,7 +175,7 @@ func FromValue(value reflect.Value, tryTag func(tag reflect.StructTag) (key, tip
   case reflect.Array:
     ret := make([]Type, 0, value.Len())
     for i := 0; i < value.Len(); i++ {
-      if v := FromValue(value.Index(i), tryTag); v != nil {
+      if v := FromValue(value.Index(i), tryTag, ignore); v != nil {
         ret = append(ret, v)
       }
     }
@@ -183,7 +188,7 @@ func FromValue(value reflect.Value, tryTag func(tag reflect.StructTag) (key, tip
         continue
       }
       key, ok := toString(it.Key())
-      v := FromValue(it.Value(), tryTag)
+      v := FromValue(it.Value(), tryTag, ignore)
       if !ok || v == nil {
         continue
       }
@@ -210,7 +215,8 @@ func FromValue(value reflect.Value, tryTag func(tag reflect.StructTag) (key, tip
       flatfield.Name(func(tag reflect.StructTag) (name string) {
         name, _ = tryTag(tag)
         return
-      }))
+      }),
+      flatfield.Ignore(ignore))
     if err != nil {
       return nil
     }
@@ -224,7 +230,7 @@ func FromValue(value reflect.Value, tryTag func(tag reflect.StructTag) (key, tip
       if key == "" {
         key = f.SField.Name
       }
-      v := FromValue(value.FieldByIndex(f.SField.Index), tryTag)
+      v := FromValue(value.FieldByIndex(f.SField.Index), tryTag, ignore)
       if v == nil {
         continue
       }
