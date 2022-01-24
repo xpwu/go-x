@@ -37,7 +37,7 @@ func TestObject_String(t *testing.T) {
 		return
 	}
 
-	v := "{\"stringKey-tips\":\"this is a string\",\"stringKey\":\"value1\",\"numberKey-tips\":\"this is a number\",\"numberKey\":24,\"nullKey-tips\":\"this is a null\",\"nullKey\":null,\"sliceKey-tips\":\"this is a slice\",\"sliceKey\":[\"str\",11,true,null],\"structKey-tips\":\"this is a struct\",\"structKey\":{\"stringKey-tips\":\"this is a string\",\"stringKey\":\"value1\",\"numberKey-tips\":\"this is a number\",\"numberKey\":24,\"nullKey-tips\":\"this is a null\",\"nullKey\":null,\"sliceKey-tips\":\"this is a slice\",\"sliceKey\":[\"str\",11,true,null]}}"
+	v := "{\"// stringKey\":\"this is a string\",\"stringKey\":\"value1\",\"// numberKey\":\"this is a number\",\"numberKey\":24,\"// nullKey\":\"this is a null\",\"nullKey\":null,\"// sliceKey\":\"this is a slice\",\"sliceKey\":[\"str\",11,true,null],\"// structKey\":\"this is a struct\",\"structKey\":{\"// stringKey\":\"this is a string\",\"stringKey\":\"value1\",\"// numberKey\":\"this is a number\",\"numberKey\":24,\"// nullKey\":\"this is a null\",\"nullKey\":null,\"// sliceKey\":\"this is a slice\",\"sliceKey\":[\"str\",11,true,null]}}"
 	//t.Log(buffer.String())
 	a.Equal(v, buffer.String())
 }
