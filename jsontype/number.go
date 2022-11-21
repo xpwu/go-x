@@ -2,6 +2,7 @@ package jsontype
 
 import (
   "encoding/json"
+  "fmt"
   "reflect"
   "strconv"
 )
@@ -146,4 +147,12 @@ func (n Number) MarshalJSON() ([]byte, error) {
 
 func (n Number) Include(other Type) bool {
   return other.Kind() == NumberK
+}
+
+func (n Number) IncludeErr(other Type, path string) error {
+  if n.Include(other) {
+    return nil
+  }
+
+  return fmt.Errorf("'%s' must be 'number(int-xxx unit-xxx, float-xxx)'", path)
 }

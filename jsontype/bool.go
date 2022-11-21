@@ -43,3 +43,11 @@ func (b Bool) Unmarshal(v interface{}, name func(tag reflect.StructTag) (name st
 func (b Bool) Include(other Type) bool {
   return other.Kind() == BoolK
 }
+
+func (b Bool) IncludeErr(other Type, path string) error {
+  if b.Include(other) {
+    return nil
+  }
+
+  return fmt.Errorf("'%s' must be 'bool'", path)
+}

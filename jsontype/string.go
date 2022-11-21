@@ -3,6 +3,7 @@ package jsontype
 import (
   "encoding/base64"
   "encoding/json"
+  "fmt"
   "reflect"
 )
 
@@ -121,5 +122,13 @@ func (s String) Unmarshal(i interface{}, name func(tag reflect.StructTag) (name 
 
 func (s String) Include(other Type) bool {
   return other.Kind() == StringK
+}
+
+func (s String) IncludeErr(other Type, path string) error {
+  if s.Include(other) {
+    return nil
+  }
+
+  return fmt.Errorf("'%s' must be 'string'", path)
 }
 

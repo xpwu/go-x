@@ -93,4 +93,24 @@ func (s Slice) Include(other Type) bool {
   return true
 }
 
+func (s Slice) IncludeErr(other Type, path string) error {
+  if other.Kind() != SliceK {
+    return fmt.Errorf("'%s' must be 'slice/array'", path)
+  }
+
+  otherS := other.(Slice)
+  l := len(s)
+  if l > len(otherS) {
+    l = len(otherS)
+  }
+
+  for i := 0; i < l; i++ {
+    if err := s[i].IncludeErr(otherS[i], fmt.Sprintf("%s.[%d]", path, i)); err != nil {
+      return err
+    }
+  }
+
+  return nil
+}
+
 

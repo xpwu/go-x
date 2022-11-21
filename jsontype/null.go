@@ -1,6 +1,9 @@
 package jsontype
 
-import "reflect"
+import (
+  "fmt"
+  "reflect"
+)
 
 func (n Null) Kind() Kind {
   return NullK
@@ -36,5 +39,13 @@ func (n Null) MarshalJSON() ([]byte, error) {
 
 func (n Null) Include(other Type) bool {
   return other.Kind() == NullK
+}
+
+func (n Null) IncludeErr(other Type, path string) error {
+  if n.Include(other) {
+    return nil
+  }
+
+  return fmt.Errorf("'%s' must be 'null'", path)
 }
 

@@ -229,3 +229,27 @@ func (o Object) Include(other Type) bool {
   return true
 }
 
+func (o Object) IncludeErr(other Type, path string) error {
+  if other.Kind() != ObjectK {
+    return fmt.Errorf("'%s' must be 'struct'", path)
+  }
+
+  m := make(map[string]Type)
+  for _,e := range o {
+    m[e.Key] = e.Value
+  }
+
+  for _,e := range other.(Object) {
+    v,ok := m[e.Key]
+    if !ok {
+      return fmt.Errorf("the field '%s' of '%s' must be set", e.Key, path)
+    }
+
+    if err := v.IncludeErr(e.Value, fmt.Sprintf("%s.%s", path, e.Key)); err != nil {
+      return err
+    }
+  }
+
+  return nil
+}
+

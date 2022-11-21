@@ -34,6 +34,7 @@ type Type interface {
 
 	// a.Include(c) c中的字段，在a中都存在，并且类型相同, a >= c
 	Include(other Type) bool
+	IncludeErr(other Type, path string) error
 }
 
 type Null struct {}
